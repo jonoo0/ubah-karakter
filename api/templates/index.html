@@ -14,13 +14,15 @@
 <body>
     <h1>Ubah Karakter</h1>
     <form method="post">
-        <label for="ubah_kalimat">Masukkan teks yang ingin diubah karakternya:</label>
-        <textarea name="masukkan_kalimat" id="masukkan_kalimat"></textarea><br><br>
+        <label for="input_text">Masukkan teks yang ingin diubah karakternya:</label>
+        <textarea name="input_text" id="input_text">{{ request.form.get('input_text', '') }}</textarea><br><br>
         <button type="submit">Ubah Karakter</button>
     </form>
     {% if kalimat_diubah %}
     <h2>Hasil Modifikasi</h2>
-    <textarea readonly="{{ kalimat_diubah }}"></textarea><br>
+    <textarea readonly="{{ teks_diubah }}"></textarea><br>
+    <a href="/download?teks_diubah={{ teks_diubah }}" download="teks_diubah.txt"></a>
+        <button>Download hasil modifikasi</button>
     {% endif %}
 </body>
 </html>

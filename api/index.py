@@ -3,7 +3,7 @@ import io
 
 app = Flask(__name__)
 
-char_map = {
+tabel_konversi = {
     'a': '\u0430',
     'c': '\u0441',
     'e': '\u0435',
@@ -14,19 +14,29 @@ char_map = {
     'y': '\u0443'
 }
 
-def ubah_karakter(kalimat):
-    return ''.join(char_map.get(c, c) for c in kalimat)
+def ubah_karakter(teks):
+    return ''.join(tabel_konversi.get(huruf, huruf) for huruf in teks)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    kalimat_diubah = None
+    teks_diubah = None
     if request.method == 'POST':
-        input_kalimat = request.form['input_kalimat']
-        kalimat_diubah = ubah_karakter(input_kalimat)
-        kalimat_diubah = io.BytesIO(kalimat_diubah.encode('utf-8'))
-        return send_file(kalimat_diubah, 
-                         as_attachment=True, 
-                         download_name='kalimat_diubah.txt', 
-                         mimetype='text/plain')
+        teks_masuk = request.form['input_text']
+        teks_diubah = ubah_karakter(teks=teks_masuk)
+
+        #simpan teks ke file txt
+        file_teks_diubah = io.BytesIO(teks_diubah.encode('utf-8'))
+        file_teks_diubah.seek(0)
+        return render_template('index.html', teks_diubah=teks_diubah, as_attachment=True)
     
-    return render_template('index.html', kalimat_diubah=kalimat_diubah)
+    return render_template('index.html', teks_diubah=teks_diubah, as_attachment=False)
+
+@app.route('/download')
+def download():
+    teks_diubah = request.args.get('teks_diubah', '')
+    file_teks_diubah = io.BytesIO(teks_diubah.encode('utf-8'))
+    file_teks_diubah.seek(0)
+    return send_file(file_teks_diubah, as_attachment=True, download_name='teks_diubah.txt', mimetype='text/plain')
+
+if __name__ == '__main__':
+    app.run(debug=True)
