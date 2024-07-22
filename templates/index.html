@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubah Karakter</title>
+    <style>
+        textarea {
+            width: 100%;
+            height: 200ox;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ubah Karakter</h1>
+    <form method="post">
+        <label for="ubah_kalimat">Masukkan teks yang ingin diubah karakternya:</label>
+        <textarea name="masukkan_kalimat" id="masukkan_kalimat"></textarea><br><br>
+        <button type="submit">Ubah Karakter</button>
+    </form>
+    {% if kalimat_diubah %}
+    <h2>Hasil Modifikasi</h2>
+    <textarea readonly="{{ kalimat_diubah }}"></textarea><br>
+    {% endif %}
+</body>
+</html>

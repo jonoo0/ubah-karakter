@@ -1,5 +1,7 @@
-import streamlit as st
+from flask import Flask, request, render_template, send_file
 import io
+
+app = Flask(__name__)
 
 char_map = {
     'a': '\u0430',
@@ -7,27 +9,24 @@ char_map = {
     'e': '\u0435',
     'h': '\u04bb',
     'j': '\u0458',
-    # 'n': '\u0578',
     'o': '\u043e',
     'p': '\u0440',
     'y': '\u0443'
 }
 
-def ubah_karakter(text):
-    return ''.join(char_map.get(char, char) for char in text) 
+def ubah_karakter(kalimat):
+    return ''.join(char_map.get(c, c) for c in kalimat)
 
-st.title('Ubah Karakter')
-
-input_text = st.text_area('Masukkan teks yang ingin diubah karakternya')
-if st.button('Ubah karakter'):
-    modified_text = ubah_karakter(input_text)
-
-    modified_file = io.BytesIO(modified_text.encode('utf-8'))
-    modified_file_name = 'hasil_modifikasi.txt'
-
-    st.text_area('Hasil modifikasi', value=modified_text, height=200)
-
-    st.download_button(label='Download hasil modifikasi', 
-                       data=modified_file,
-                       file_name=modified_file_name, 
-                       mime='text/plain')
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    kalimat_diubah = None
+    if request.method == 'POST':
+        input_kalimat = request.form['input_kalimat']
+        kalimat_diubah = ubah_karakter(input_kalimat)
+        kalimat_diubah = io.BytesIO(kalimat_diubah.encode('utf-8'))
+        return send_file(kalimat_diubah, 
+                         as_attachment=True, 
+                         download_name='kalimat_diubah.txt', 
+                         mimetype='text/plain')
+    
+    return render_template('index.html', kalimat_diubah=kalimat_diubah)
